@@ -5,6 +5,7 @@ Parses an EPUB file into a structured object that can be used to serve the book 
 import os
 import pickle
 import shutil
+import sys
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Any
 from datetime import datetime
@@ -290,17 +291,18 @@ def save_to_pickle(book: Book, output_dir: str):
     print(f"Saved structured data to {p_path}")
 
 
-# --- CLI ---
-
-if __name__ == "__main__":
-
+def main():
     import sys
-    if len(sys.argv) < 2:
-        print("Usage: python reader3.py <file.epub>")
+    if len(sys.argv) < 3:
+        print("Usage: reader3 add <file.epub>")
         sys.exit(1)
 
-    epub_file = sys.argv[1]
-    assert os.path.exists(epub_file), "File not found."
+    if sys.argv[1].strip().lower() != "add":
+        print("ERROR: only 'add' mode is supported for now.", file=sys.stderr)
+        sys.exit(1)
+
+    epub_file = sys.argv[2]
+    assert os.path.exists(epub_file), "Could not find file {epub_file}."
     out_dir = os.path.splitext(epub_file)[0] + "_data"
 
     book_obj = process_epub(epub_file, out_dir)
@@ -311,3 +313,8 @@ if __name__ == "__main__":
     print(f"Physical Files (Spine): {len(book_obj.spine)}")
     print(f"TOC Root Items: {len(book_obj.toc)}")
     print(f"Images extracted: {len(book_obj.images)}")
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+

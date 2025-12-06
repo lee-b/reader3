@@ -1,0 +1,12 @@
+services:
+  reader3:
+    build: .
+    environment:
+      - "READER3_PORT=8123"
+      - "READER3_HOST=0.0.0.0"
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./data:/app/data
+      - ./templates:/app/templates
+
